@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =========================
+         VISTAS: HEADER
+         ========================= -->
+
+    <!-- Tree -->
+    <record id="view_lavish_xml_generator_header_tree" model="ir.ui.view">
+      <field name="name">lavish.xml.generator.header.tree</field>
+      <field name="model">lavish.xml.generator.header</field>
+      <field name="arch" type="xml">
+        <tree string="Generadores XML de Nómina">
+          <field name="name"/>
+          <field name="code"/>
+          <field name="active"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- Form -->
+    <record id="view_lavish_xml_generator_header_form" model="ir.ui.view">
+      <field name="name">lavish.xml.generator.header.form</field>
+      <field name="model">lavish.xml.generator.header</field>
+      <field name="arch" type="xml">
+        <form string="Generador XML de Nómina">
+          <sheet>
+            <group>
+              <group>
+                <field name="name"/>
+                <field name="code" placeholder="Ej: NomElectronica_Carvajal"/>
+              </group>
+              <group>
+                <field name="active"/>
+              </group>
+            </group>
+
+            <notebook>
+              <page string="Detalles (tags / reglas)">
+                <!-- One2many de detalles -->
+                <field name="details_ids" context="{'default_header_id': active_id}">
+                  <tree editable="bottom">
+                    <field name="sequence"/>
+                    <field name="code_python" placeholder="Códigos de regla a incluir. Ej: BASICO;HEXT;COM... o usa * para 'todos'"/>
+                    <field name="attributes_code_python" placeholder="Atributos/alias adicionales o usa *"/>
+                  </tree>
+                  <form>
+                    <group>
+                      <field name="sequence"/>
+                      <field name="code_python" widget="text"/>
+                      <field name="attributes_code_python" widget="text"/>
+                    </group>
+                  </form>
+                </field>
+                <p >
+                  Usa <b>*</b> en <i>code_python</i> o <i>attributes_code_python</i> para incluir todas las reglas por defecto.
+                </p>
+              </page>
+            </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- Search -->
+    <record id="view_lavish_xml_generator_header_search" model="ir.ui.view">
+      <field name="name">lavish.xml.generator.header.search</field>
+      <field name="model">lavish.xml.generator.header</field>
+      <field name="arch" type="xml">
+        <search string="Buscar generadores">
+          <field name="name"/>
+          <field name="code"/>
+          <filter string="Activos" name="active" domain="[('active','=',True)]"/>
+          <filter string="Inactivos" name="inactive" domain="[('active','=',False)]"/>
+          <group expand="0" string="Agrupar por">
+            <filter string="Código" name="grp_code" context="{'group_by':'code'}"/>
+          </group>
+        </search>
+      </field>
+    </record>
+
+    <!-- =========================
+         VISTAS: DETAIL
+         ========================= -->
+
+    <!-- Tree -->
+    <record id="view_lavish_xml_generator_detail_tree" model="ir.ui.view">
+      <field name="name">lavish.xml.generator.detail.tree</field>
+      <field name="model">lavish.xml.generator.detail</field>
+      <field name="arch" type="xml">
+        <tree string="Detalles de Generador" editable="bottom">
+          <field name="header_id"/>
+          <field name="sequence"/>
+          <field name="code_python"/>
+          <field name="attributes_code_python"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- Form -->
+    <record id="view_lavish_xml_generator_detail_form" model="ir.ui.view">
+      <field name="name">lavish.xml.generator.detail.form</field>
+      <field name="model">lavish.xml.generator.detail</field>
+      <field name="arch" type="xml">
+        <form string="Detalle de Generador">
+          <sheet>
+            <group>
+              <group>
+                <field name="header_id"/>
+                <field name="sequence"/>
+              </group>
+              <group>
+                <field name="code_python" widget="text"/>
+                <field name="attributes_code_python" widget="text"/>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- Search -->
+    <record id="view_lavish_xml_generator_detail_search" model="ir.ui.view">
+      <field name="name">lavish.xml.generator.detail.search</field>
+      <field name="model">lavish.xml.generator.detail</field>
+      <field name="arch" type="xml">
+        <search string="Buscar detalles">
+          <field name="header_id"/>
+          <field name="code_python"/>
+          <field name="attributes_code_python"/>
+          <group expand="0" string="Agrupar por">
+            <filter string="Generador" name="grp_header" context="{'group_by':'header_id'}"/>
+          </group>
+        </search>
+      </field>
+    </record>
+
+    <!-- =========================
+         ACCIÓN + MENÚS
+         ========================= -->
+
+    <record id="action_lavish_xml_generator_header" model="ir.actions.act_window">
+      <field name="name">Generadores XML Nómina</field>
+      <field name="res_model">lavish.xml.generator.header</field>
+      <field name="view_mode">tree,form</field>
+      <field name="search_view_id" ref="view_lavish_xml_generator_header_search"/>
+    </record>
+
+    <menuitem id="menu_lavish_xml_generator_header"
+              name="Plantillas / Reglas"
+              parent="lavish_hr_payroll.menu_hr_electronic_payroll_parent"
+              action="action_lavish_xml_generator_header"
+              sequence="10"
+              groups="hr_payroll.group_hr_payroll_user"/>
+</odoo>

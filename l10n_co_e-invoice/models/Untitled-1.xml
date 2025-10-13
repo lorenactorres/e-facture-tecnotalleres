@@ -1,0 +1,289 @@
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+    xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+    xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
+    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+    xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2"
+    xmlns:sts="http://www.dian.gov.co/contratos/facturaelectronica/v1/Structures"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd">
+    <ext:UBLExtensions>
+        <ext:UBLExtension>
+            <ext:ExtensionContent>
+                <sts:DianExtensions>
+                    <sts:InvoiceControl>
+                        <sts:InvoiceAuthorization>18764076665304</sts:InvoiceAuthorization>
+                        <sts:AuthorizationPeriod>
+                            <cbc:StartDate>2024-08-06</cbc:StartDate>
+                            <cbc:EndDate>2025-02-06</cbc:EndDate>
+                        </sts:AuthorizationPeriod>
+                        <sts:AuthorizedInvoices>
+                            <sts:Prefix>ESPE</sts:Prefix>
+                            <sts:From>9653</sts:From>
+                            <sts:To>1000000</sts:To>
+                        </sts:AuthorizedInvoices>
+                    </sts:InvoiceControl>
+                    <sts:InvoiceSource>
+                        <cbc:IdentificationCode listAgencyID="6"
+                            listAgencyName="United Nations Economic Commission for Europe"
+                            listSchemeURI="urn:oasis:names:specification:ubl:codelist:gc:CountryIdentificationCode-2.1">
+                            CO</cbc:IdentificationCode>
+                    </sts:InvoiceSource>
+                    <sts:SoftwareProvider>
+                        <sts:ProviderID schemeAgencyID="195"
+                            schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)"
+                            schemeID="9" schemeName="31">70529946</sts:ProviderID>
+                        <sts:SoftwareID schemeAgencyID="195"
+                            schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">
+                            4b4eafc1-35c8-4648-829e-970a7f708a1f</sts:SoftwareID>
+                    </sts:SoftwareProvider>
+                    <sts:SoftwareSecurityCode schemeAgencyID="195"
+                        schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">
+                        2d59f583b25039024f97d68c2ae448190a8cf3ee73b340eb02e89217ef144f0139fad51c891122dc348aed098fc7d35d</sts:SoftwareSecurityCode>
+                    <sts:AuthorizationProvider>
+                        <sts:AuthorizationProviderID schemeAgencyID="195"
+                            schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)"
+                            schemeID="4" schemeName="31">800197268</sts:AuthorizationProviderID>
+                    </sts:AuthorizationProvider>
+                    <sts:QRCode>
+                        NroFactura=ESPE0795
+                        NitFacturador=70529946
+                        NitAdquiriente=901407951
+                        FechaFactura=2024-08-10
+                        ValorTotalFactura=168900.00
+                        CUFE=f5b8b545b4f97b003a0cbdd8571405cbef716d5b4c41b3416c08e7933435441742c32337d96a9b6549caa3c34a9991ad
+                        URL=https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey=f5b8b545b4f97b003a0cbdd8571405cbef716d5b4c41b3416c08e7933435441742c32337d96a9b6549caa3c34a9991ad</sts:QRCode>
+                </sts:DianExtensions>
+            </ext:ExtensionContent>
+        </ext:UBLExtension>
+        <ext:UBLExtension>
+            <ext:ExtensionContent />
+        </ext:UBLExtension>
+    </ext:UBLExtensions>
+    <cbc:UBLVersionID>UBL 2.1</cbc:UBLVersionID>
+    <cbc:CustomizationID>10</cbc:CustomizationID>
+    <cbc:ProfileID>DIAN 2.1: Factura Electrónica de Venta</cbc:ProfileID>
+    <cbc:ProfileExecutionID>1</cbc:ProfileExecutionID>
+    <cbc:ID>ESPE0795</cbc:ID>
+    <cbc:UUID schemeID="1" schemeName="CUFE-SHA384">
+        f5b8b545b4f97b003a0cbdd8571405cbef716d5b4c41b3416c08e7933435441742c32337d96a9b6549caa3c34a9991ad</cbc:UUID>
+    <cbc:IssueDate>2024-08-10</cbc:IssueDate>
+    <cbc:IssueTime>06:13:02-05:00</cbc:IssueTime>
+    <cbc:InvoiceTypeCode>01</cbc:InvoiceTypeCode>
+    <cbc:Note>Terminos y condiciones: https://inversiones-matisa.odoo.com/terms</cbc:Note>
+    <cbc:DocumentCurrencyCode>COP</cbc:DocumentCurrencyCode>
+    <cbc:LineCountNumeric>1</cbc:LineCountNumeric>
+    <cac:OrderReference>
+        <cbc:ID>JYLC390734</cbc:ID>
+    </cac:OrderReference>
+    <cac:AccountingSupplierParty>
+        <cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>
+        <cac:Party>
+            <cbc:IndustryClassificationCode>False</cbc:IndustryClassificationCode>
+            <cac:PartyName>
+                <cbc:Name>Javier Garces Diaz</cbc:Name>
+            </cac:PartyName>
+            <cac:PhysicalLocation>
+                <cac:Address>
+                    <cbc:ID>23001</cbc:ID>
+                    <cbc:CityName>Montería</cbc:CityName>
+                    <cbc:CountrySubentity>Córdoba</cbc:CountrySubentity>
+                    <cbc:CountrySubentityCode>23</cbc:CountrySubentityCode>
+                    <cac:AddressLine>
+                        <cbc:Line>CL 9 A CR 19 02 BRR SANTA TERESA</cbc:Line>
+                    </cac:AddressLine>
+                    <cac:Country>
+                        <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+                        <cbc:Name languageID="es">Colombia</cbc:Name>
+                    </cac:Country>
+                </cac:Address>
+            </cac:PhysicalLocation>
+            <cac:PartyTaxScheme>
+                <cbc:RegistrationName>Javier Garces Diaz</cbc:RegistrationName>
+                <cbc:CompanyID schemeAgencyID="195"
+                    schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)"
+                    schemeID="9" schemeName="31">70529946</cbc:CompanyID>
+                <cbc:TaxLevelCode listName="48">R-99-PN</cbc:TaxLevelCode>
+                <cac:RegistrationAddress>
+                    <cbc:ID>23001</cbc:ID>
+                    <cbc:CityName>Montería</cbc:CityName>
+                    <cbc:CountrySubentity>Córdoba</cbc:CountrySubentity>
+                    <cbc:CountrySubentityCode>23</cbc:CountrySubentityCode>
+                    <cac:AddressLine>
+                        <cbc:Line>CL 9 A CR 19 02 BRR SANTA TERESA</cbc:Line>
+                    </cac:AddressLine>
+                    <cac:Country>
+                        <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+                        <cbc:Name languageID="es">Colombia</cbc:Name>
+                    </cac:Country>
+                </cac:RegistrationAddress>
+                <cac:TaxScheme>
+                    <cbc:ID>01</cbc:ID>
+                    <cbc:Name>IVA</cbc:Name>
+                </cac:TaxScheme>
+            </cac:PartyTaxScheme>
+            <cac:PartyLegalEntity>
+                <cbc:RegistrationName>Javier Garces Diaz</cbc:RegistrationName>
+                <cbc:CompanyID schemeAgencyID="195"
+                    schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)"
+                    schemeID="9" schemeName="31">70529946</cbc:CompanyID>
+                <cac:CorporateRegistrationScheme>
+                    <cbc:ID>ESPE</cbc:ID>
+                </cac:CorporateRegistrationScheme>
+            </cac:PartyLegalEntity>
+            <cac:Contact>
+                <cbc:ElectronicMail>auxiliar.materiales.jyl@gmail.com</cbc:ElectronicMail>
+            </cac:Contact>
+        </cac:Party>
+    </cac:AccountingSupplierParty>
+    <cac:AccountingCustomerParty>
+        <cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>
+        <cac:Party>
+            <cac:PartyIdentification>
+                <cbc:ID schemeName="31" schemeID="6">901407951</cbc:ID>
+            </cac:PartyIdentification>
+            <cac:PartyName>
+                <cbc:Name>CONSTRUCTORA TERLUZ S.A.S</cbc:Name>
+            </cac:PartyName>
+            <cac:PhysicalLocation>
+                <cac:Address>
+                    <cbc:ID>23001</cbc:ID>
+                    <cbc:CityName>Montería</cbc:CityName>
+                    <cbc:CountrySubentity>Córdoba</cbc:CountrySubentity>
+                    <cbc:CountrySubentityCode>23</cbc:CountrySubentityCode>
+                    <cac:AddressLine>
+                        <cbc:Line>CC PLACES MALL OF 317 CL 6 65 24</cbc:Line>
+                    </cac:AddressLine>
+                    <cac:Country>
+                        <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+                        <cbc:Name languageID="es">Colombia</cbc:Name>
+                    </cac:Country>
+                </cac:Address>
+            </cac:PhysicalLocation>
+            <cac:PartyTaxScheme>
+                <cbc:RegistrationName>CONSTRUCTORA TERLUZ S.A.S</cbc:RegistrationName>
+                <cbc:CompanyID schemeAgencyID="195"
+                    schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)"
+                    schemeID="6" schemeName="31">901407951</cbc:CompanyID>
+                <cbc:TaxLevelCode listName="48">R-99-PN</cbc:TaxLevelCode>
+                <cac:RegistrationAddress>
+                    <cbc:ID>23001</cbc:ID>
+                    <cbc:CityName>Montería</cbc:CityName>
+                    <cbc:CountrySubentity>Córdoba</cbc:CountrySubentity>
+                    <cbc:CountrySubentityCode>23</cbc:CountrySubentityCode>
+                    <cac:AddressLine>
+                        <cbc:Line>CC PLACES MALL OF 317 CL 6 65 24</cbc:Line>
+                    </cac:AddressLine>
+                    <cac:Country>
+                        <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+                        <cbc:Name languageID="es">Colombia</cbc:Name>
+                    </cac:Country>
+                </cac:RegistrationAddress>
+                <cac:TaxScheme>
+                    <cbc:ID>01</cbc:ID>
+                    <cbc:Name>IVA</cbc:Name>
+                </cac:TaxScheme>
+            </cac:PartyTaxScheme>
+            <cac:PartyLegalEntity>
+                <cbc:RegistrationName>CONSTRUCTORA TERLUZ S.A.S</cbc:RegistrationName>
+                <cbc:CompanyID schemeAgencyID="195"
+                    schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)"
+                    schemeID="6" schemeName="31">901407951</cbc:CompanyID>
+            </cac:PartyLegalEntity>
+            <cac:Contact>
+                <cbc:Name>CONSTRUCTORA TERLUZ S.A.S</cbc:Name>
+                <cbc:Telephone>+57 320 2528767</cbc:Telephone>
+                <cbc:ElectronicMail>constructoraterluz@gmail.com</cbc:ElectronicMail>
+            </cac:Contact>
+            <cac:Person>
+                <cbc:FirstName>CONSTRUCTORA TERLUZ S.A.S</cbc:FirstName>
+            </cac:Person>
+        </cac:Party>
+    </cac:AccountingCustomerParty>
+    <cac:Delivery>
+        <cac:DeliveryAddress>
+            <cbc:ID>23001</cbc:ID>
+            <cbc:CityName>MONTERÍA</cbc:CityName>
+            <cbc:CountrySubentity>Córdoba</cbc:CountrySubentity>
+            <cbc:CountrySubentityCode>23</cbc:CountrySubentityCode>
+            <cac:AddressLine>
+                <cbc:Line>CC PLACES MALL OF 317 CL 6 65 24</cbc:Line>
+            </cac:AddressLine>
+            <cac:Country>
+                <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+                <cbc:Name languageID="es">Colombia</cbc:Name>
+            </cac:Country>
+        </cac:DeliveryAddress>
+    </cac:Delivery>
+    <cac:PaymentMeans>
+        <cbc:ID>1</cbc:ID>
+        <cbc:PaymentMeansCode>1</cbc:PaymentMeansCode>
+        <cbc:PaymentDueDate>2024-08-08</cbc:PaymentDueDate>
+        <cbc:PaymentID>1234</cbc:PaymentID>
+    </cac:PaymentMeans>
+    <cac:AllowanceCharge>
+        <cbc:ID>2</cbc:ID>
+        <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+        <cbc:AllowanceChargeReason>Descuento por ajuste al peso</cbc:AllowanceChargeReason>
+        <cbc:MultiplierFactorNumeric>0.000190</cbc:MultiplierFactorNumeric>
+        <cbc:Amount currencyID="COP">0.27</cbc:Amount>
+        <cbc:BaseAmount currencyID="COP">141933.27</cbc:BaseAmount>
+    </cac:AllowanceCharge>
+    <cac:TaxTotal>
+        <cbc:TaxAmount currencyID="COP">26967.27</cbc:TaxAmount>
+        <cbc:RoundingAmount currencyID="COP">0</cbc:RoundingAmount>
+        <cac:TaxSubtotal>
+            <cbc:TaxableAmount currencyID="COP">141933.00</cbc:TaxableAmount>
+            <cbc:TaxAmount currencyID="COP">26967.27</cbc:TaxAmount>
+            <cac:TaxCategory>
+                <cbc:Percent>19.00</cbc:Percent>
+                <cac:TaxScheme>
+                    <cbc:ID>01</cbc:ID>
+                    <cbc:Name>IVA</cbc:Name>
+                </cac:TaxScheme>
+            </cac:TaxCategory>
+        </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:LegalMonetaryTotal>
+        <cbc:LineExtensionAmount currencyID="COP">141933.00</cbc:LineExtensionAmount>
+        <cbc:TaxExclusiveAmount currencyID="COP">141933.00</cbc:TaxExclusiveAmount>
+        <cbc:TaxInclusiveAmount currencyID="COP">168900.27</cbc:TaxInclusiveAmount>
+        <cbc:AllowanceTotalAmount currencyID="COP">0.27</cbc:AllowanceTotalAmount>
+        <cbc:ChargeTotalAmount currencyID="COP">0.00</cbc:ChargeTotalAmount>
+        <cbc:PrepaidAmount currencyID="COP">0.00</cbc:PrepaidAmount>
+        <cbc:PayableAmount currencyID="COP">168900.00</cbc:PayableAmount>
+    </cac:LegalMonetaryTotal>
+    <cac:InvoiceLine>
+        <cbc:ID>1</cbc:ID>
+        <cbc:Note />
+        <cbc:InvoicedQuantity unitCode="94">3.0</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="COP">141933.0</cbc:LineExtensionAmount>
+        <cac:TaxTotal>
+            <cbc:TaxAmount currencyID="COP">26967.270000000004</cbc:TaxAmount>
+            <cbc:RoundingAmount currencyID="COP">0</cbc:RoundingAmount>
+            <cac:TaxSubtotal>
+                <cbc:TaxableAmount currencyID="COP">141933.00</cbc:TaxableAmount>
+                <cbc:TaxAmount currencyID="COP">26967.27</cbc:TaxAmount>
+                <cac:TaxCategory>
+                    <cbc:Percent>19.00</cbc:Percent>
+                    <cac:TaxScheme>
+                        <cbc:ID>01</cbc:ID>
+                        <cbc:Name>IVA</cbc:Name>
+                    </cac:TaxScheme>
+                </cac:TaxCategory>
+            </cac:TaxSubtotal>
+        </cac:TaxTotal>
+        <cac:Item>
+            <cbc:Description>[05086] DISCO DIAM SEG 9" ABRACOL</cbc:Description>
+            <cac:SellersItemIdentification>
+                <cbc:ID>05086</cbc:ID>
+            </cac:SellersItemIdentification>
+            <cac:StandardItemIdentification>
+                <cbc:ID schemeID="010" schemeAgencyID="9" schemeName="GTIN">7705509021671</cbc:ID>
+            </cac:StandardItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="COP">47311.0</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="94">3.0</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+</Invoice>

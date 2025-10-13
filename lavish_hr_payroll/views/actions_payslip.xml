@@ -1,0 +1,693 @@
+<odoo>
+    <data>
+        
+         <!-- Formulario de nomina -->
+         <record id="view_lavish_hr_payroll_form_payslip" model="ir.ui.view">
+            <field name="name">hr.payroll.lavish.hr.payslip.form.inherit</field>
+            <field name="model">hr.payslip</field>
+            <field name="priority">20</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//form[1]/header[1]/button[2]" position="before">
+                    <button name="restart_payroll" type="object" string="Reiniciar" invisible="state != 'done'"/>
+                    <button name="action_send_payslip_email" 
+                    type="object" 
+                    string="Enviar por Email" 
+                    class="btn-secondary" 
+                    icon="fa-paper-plane"
+                    invisible="state not in ['done', 'paid']"/>
+                </xpath>
+                <xpath expr="//field[@name='journal_id']" position="before">
+                    <field name="analytic_account_id"/>
+                    <field name="employee_id" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='contract_id']" position="after">
+                    <field name="struct_process" invisible="1"/>
+                    <field name="process_loans" widget="boolean_toggle" options="{'right': true}"/>
+                    <field name="double_installment" invisible="process_loans == False" widget="boolean_toggle" options="{'right': true}"/>
+                    <field name="process_settlement_loans" invisible="struct_process == 'contrato'" widget="boolean_toggle" options="{'right': true}"/>
+                    <field name="refund_date" invisible="struct_process != 'vacaciones'" readonly="state == 'done'"/>
+                    <field name="date_prima" invisible="not pay_primas_in_payroll or struct_process == 'contrato'" readonly="state == 'done'"/>
+                    <field name="date_cesantias" invisible="not pay_cesantias_in_payroll or struct_process == 'contrato'" readonly="state == 'done'"/>
+                    <field name="date_liquidacion" invisible="struct_process == 'contrato'" readonly="state == 'done'"/>
+                    <field name="pay_vacations_in_payroll" readonly="state == 'done'"/>
+                    <field name="pay_cesantias_in_payroll" invisible="struct_process == 'contrato'" readonly="state == 'done'"/>
+                    <field name="pay_primas_in_payroll" invisible="struct_process == 'contrato'" readonly="state == 'done'"/>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='salary_computation']/field[@name='line_ids']/tree[1]/field[@name='quantity']" position="attributes">
+                    <attribute name="digits">[12,2]</attribute>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='salary_computation']/field[@name='line_ids']/tree[1]/field[@name='amount']" position="attributes">
+                    <attribute name="digits">[12,2]</attribute>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/group[1]" position="after">
+                    <group string="Liq. de Contrato" invisible="struct_process != 'contrato'" style="border-style:solid; padding:10px">
+                        <group>
+                            <field name="date_liquidacion" invisible="struct_process != 'contrato'" required="struct_process == 'contrato'" readonly="state == 'done'"/>
+                            <field name="reason_retiro" invisible="struct_process != 'contrato'" readonly="state == 'done'"/>
+                            <field name="have_compensation" invisible="struct_process != 'contrato'" readonly="state == 'done'"/>
+                            <field name="no_days_worked" invisible="struct_process != 'contrato'" readonly="state == 'done'"/>
+                            <field name="pagar_cesantias_ano_anterior" invisible="struct_process != 'contrato'" readonly="state == 'done'"/>
+                            <field name="settle_payroll_concepts" invisible="struct_process != 'contrato'" readonly="state == 'done'"/>
+                            <field name="novelties_payroll_concepts" invisible="struct_process != 'contrato'" readonly="state == 'done'"/>
+                        </group>
+                        <group>
+                            <field name="date_prima" invisible="struct_process != 'contrato'" required="struct_process == 'contrato'" readonly="state == 'done'"/>
+                            <field name="date_cesantias" invisible="struct_process != 'contrato'" required="struct_process == 'contrato'" readonly="state == 'done'"/>
+                            <field name="date_vacaciones" invisible="struct_process != 'contrato'" required="struct_process == 'contrato'" readonly="state == 'done'"/>
+                        </group>
+                    </group>
+                    <group invisible="struct_process not in ['cesantias','intereses_cesantias','contrato']">
+                        <field name="is_advance_severance" invisible="struct_process not in ['cesantias','intereses_cesantias']"/>
+                        <field name="value_advance_severance" invisible="not is_advance_severance" required="is_advance_severance"/>
+                        <field name="employee_severance_pay" invisible="struct_process not in ['cesantias','intereses_cesantias','contrato']"/>
+                        <field name="severance_payments_reverse" invisible="struct_process not in ['cesantias','intereses_cesantias','contrato']" widget="many2many_tags"/>
+                    </group>
+                    <group invisible="struct_process not in ['prima']">
+                        <field name="prima_payslip_reverse_id" invisible="struct_process not in ['prima']"/>
+                    </group>
+                    <group invisible="struct_process != 'vacaciones'" style="border-style:solid; padding:10px">
+                        <group colspan="4">
+                            <field name="paid_vacation_ids" invisible="struct_process != 'vacaciones'" readonly="state == 'done'">
+                                <tree editable="bottom">
+                                    <field name="paid_vacation_days"/>
+                                    <field name="start_date_paid_vacation"/>
+                                    <field name="end_date_paid_vacation" readonly="1" force_save="1"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </group>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/notebook[1]/page[2]/field[@name='line_ids']/tree[1]/field[@name='code']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/notebook[1]/page[2]/field[@name='line_ids']/tree[1]/field[@name='name']" position="after">
+                    <field name="initial_accrual_date" optional="show"/>
+                    <field name="final_accrual_date" optional="show"/>
+                    <field name="amount_base" optional="show"/>
+                    <field name="entity_id" optional="show"/>
+                    <field name="loan_id" optional="show"/>
+                    <field name="leave_id" optional="show"/>
+                    <field name="computation" optional="hide"/>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/notebook[1]/page[2]/field[@name='line_ids']" position="after">
+                    <group class="oe_subtotal_footer oe_right" colspan="2" invisible="not rtefte_id">
+                        <field name="rtefte_id"/>
+                    </group>
+                    <group class="oe_subtotal_footer oe_right" colspan="2">
+                        <button string="Excel acumulados valores variables" name="base_values_export_excel" type="object"/>
+                    </group>
+                    <group class="d-flex justify-content-end" colspan="12">
+                        <button string="Excel Líneas de recibo de nómina" name="get_excel_lines" type="object"/>
+                    </group>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/notebook[1]/page[1]" position="before">
+                    <page name="page_concepts" string="Detalle de nómina">
+                        <div class="row detalle-nomina">
+                            <div class="col-md-6 devengos-contenedor">
+                                <div class="alert alert-success" role="alert">
+                                    <b class="tiulo-detalle-nomina titulo-devengos">Devengos</b>
+                                </div>
+                                <field name="earnings_ids" class="col-md-12" mode="kanban" context="{'kanban_view_ref':'lavish_payroll.hr_payslip_line_kanban'}"/>
+                            </div>
+                            <div class="col-md-6 deducciones-contenedor">
+                                <div class="alert alert-danger" role="alert">
+                                    <b class="tiulo-detalle-nomina titulo-deducciones">Deducciones</b>
+                                </div>
+                                <field name="deductions_ids" class="col-md-12" mode="kanban" context="{'kanban_view_ref':'lavish_payroll.hr_payslip_line_kanban'}"/>
+                            </div>
+                        </div>
+                        <div class="row detalle-nomina">
+                            <div class="col-md-6 provisiones-contenedor">
+                                <div class="alert alert-warning" role="alert">
+                                    <b class="tiulo-detalle-nomina titulo-provisiones">Provisiones</b>
+                                </div>
+                                <field name="provisions_ids" class="col-md-12" mode="kanban" context="{'kanban_view_ref':'lavish_payroll.hr_payslip_line_kanban'}"/>
+                            </div>
+                            <div class="col-md-6 provisiones-contenedor">
+                                <div class="alert alert-warning" role="alert">
+                                    <b class="tiulo-detalle-nomina titulo-subtotales">Subtotales</b>
+                                </div>
+                                <field name="bases_ids" class="col-md-12" mode="kanban" context="{'kanban_view_ref':'lavish_payroll.hr_payslip_line_kanban'}"/>
+                            </div>
+                            <div class="col-md-6 neto-contenedor">
+                                <div class="alert alert-primary" role="alert">
+                                    <b class="tiulo-detalle-nomina titulo-neto">Neto</b>
+                                </div>
+                                <field name="outcome_ids" class="col-md-12" mode="kanban" context="{'kanban_view_ref':'lavish_payroll.hr_payslip_line_kanban'}"/>
+                            </div>
+                        </div>
+                        <field name="resulados_op" readonly="1" colspan="2" nolabel="1" widget="html"/>
+                        <field name="prestaciones_sociales_report" readonly="1" colspan="2" nolabel="1" widget="html"/>
+                        <field name="resulados_rt" readonly="1" colspan="2" nolabel="1" widget="html"/>
+                    </page>
+                </xpath>
+        
+                <field name="line_ids" position="after">
+                    <b class="tiulo-detalle-nomina titulo-subtotales">Reglas no aplicada</b>
+                    <field name="not_line_ids" colspan="4" nolabel="1" readonly="1">
+                        <tree>
+                            <field name="name"/>
+                            <field name="code" invisible="1"/>
+                            <field name="category_id"/>
+                            <field name="sequence" invisible="1"/>
+                            <field name="quantity"/>
+                            <field name="entity_id"/>
+                            <field name="loan_id"/>
+                            <field name="salary_rule_id"/>
+                            <field name="amount"/>
+                            <field name="total"/>
+                        </tree>
+                    </field>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="alert alert-warning" role="alert" invisible="not enable_rule_overrides">
+                                <div style="display: flex; align-items: center;">
+                                    <i class="fa fa-exclamation-triangle" style="margin-right: 10px; font-size: 20px;"/>
+                                    <div>
+                                        <strong>Modo de Ajustes Manuales Activado</strong>
+                                        <ul style="margin-bottom: 0; margin-top: 8px;">
+                                            <li>Los ajustes manuales pueden crear diferencias con los cálculos automáticos</li>
+                                            <li>Las modificaciones quedarán registradas en el historial</li>
+                                            <li>Se requiere documentar el motivo de cada ajuste</li>
+                                            <li>Valide todos los cálculos antes de confirmar la nómina</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                <field name="enable_rule_overrides"/>
+                                <span style="margin-left: 8px;" class="text-muted">
+                                    <i class="fa fa-info-circle"/>
+                                    Permite modificar manualmente los valores de las reglas salariales
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="override_section" invisible="not enable_rule_overrides">
+                        <b class="tiulo-detalle-nomina titulo-subtotales">Ajustes de Reglas</b>
+                        <field name="rule_override_ids" 
+                            context="{'default_payslip_id': id}">
+                            <tree editable="bottom">
+                                <field name="rule_id" 
+                                    domain="[('struct_id', '=', parent.struct_id)]"
+                                    options="{'no_create': True, 'no_open': True}"/>
+                                <field name="override_type"/>
+                                <field name="value_original" readonly="1"/>
+                                <field name="value_override"/>
+                                <field name="active"/>
+                                <field name="state" readonly="1"/>
+                                <field name="simulation_result" readonly="1"/>
+                                <field name="difference" readonly="1"/>
+                                <button name="action_simulate" 
+                                    string="Simular" 
+                                    type="object" 
+                                    icon="fa-calculator"
+                                    invisible="state != 'draft'"/>
+                            </tree>
+                            <form>
+                                <header>
+                                    <button name="action_simulate" 
+                                        string="Simular Ajuste" 
+                                        type="object" 
+                                        class="oe_highlight"
+                                        invisible="state != 'draft'"/>
+                                    <field name="state" widget="statusbar"/>
+                                </header>
+                                <sheet>
+                                    <group>
+                                        <group>
+                                            <field name="rule_id" 
+                                                domain="[('struct_id', '=', parent.struct_id)]"
+                                                options="{'no_create': True}"/>
+                                            <field name="override_type"/>
+                                            <field name="value_original"/>
+                                            <field name="value_override"/>
+                                            <field name="active"/>
+                                        </group>
+                                        <group>
+                                            <field name="simulation_date"/>
+                                            <field name="simulation_result"/>
+                                            <field name="difference"/>
+                                        </group>
+                                    </group>
+                                    <notebook>
+                                        <page string="Descripción">
+                                            <field name="description" 
+                                                placeholder="Describir motivo del ajuste..."/>
+                                        </page>
+                                    </notebook>
+                                </sheet>
+                            </form>
+                        </field>
+                    </div>
+                </field>
+                <xpath expr="//form[1]/sheet[1]/notebook[1]/page[2]" position="before">
+                    <page string="Novedades">
+                        <b class="tiulo-detalle-nomina titulo-subtotales">Horas Extras</b>
+                        <field name="extrahours_ids" context="{'default_employee_id':employee_id,}"/>
+                        <b class="tiulo-detalle-nomina titulo-subtotales">Novedades Varias</b>
+                        <field name="novedades_ids" context="{'default_employee_id':employee_id,'default_date':date_to}">
+                            <tree editable="bottom" colspan="2">
+                                <field name="employee_id" domain="[('id', '=', employee_id)]" required="1"/>
+                                <field name="salary_rule_id"/>
+                                <field name="dev_or_ded"/>
+                                <field name="date"/>
+                                <field name="amount"/>
+                                <field name="partner_id"/>
+                                <button string="Eliminar Novedad" type="object" name="action_delete_novedad" class="btn-danger"/>
+                            </tree>
+                        </field>
+                        <b class="tiulo-detalle-nomina titulo-subtotales">Prestamos y Anticipos</b>
+                        <field name="loan_installment_ids">
+                            <tree editable="bottom" colspan="2">
+                                <field name="sequence" widget="handle"/>
+                                <field name="display_name"/>
+                                <field name="date" string="Fecha de Pago" readonly="1" />
+                                <field name="amount"  readonly="1"  sum="Total" string="Monto de Cuota" decoration-bf="1"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="paid" string="Pagado" widget="toggle_button" readonly="1" invisible="1" />
+                                <field name="skip" string="Omitido" widget="toggle_button" readonly="1" />
+                                <field name="skip_reason" string="Razón de Omisión" readonly="1" />
+                                <field name="payment_state" readonly="1" />
+                                <button name="action_skip_installment" type="object" icon="fa-ban" 
+                                        string="Omitir Cuota" 
+                                        class="btn btn-link"
+                                        help="Marcar esta cuota como omitida"
+                                        invisible="paid == True or skip == True"/>    
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+                <xpath expr="//page[@name='worked_days_input']//field[@name='worked_days_line_ids']//tree" position="inside">
+                    <field name="number_of_days_aux" string="Dias Aux. Transp."/>
+                    <field name="symbol" string="Simbolo"/>
+                    <field name="code" invisible="1" string="Simbolo"/>
+                </xpath>
+                <xpath expr="//page[@name='worked_days_input']//field[@name='worked_days_line_ids']//tree" position="attributes">
+                    <attribute name="decoration-bf">1</attribute>
+                    <attribute name="decoration-success">code == 'WORK_D'</attribute>
+                    <attribute name="decoration-danger">symbol == '-'</attribute>
+                    <attribute name="decoration-info">code == 'OUT'</attribute>
+                    <attribute name="decoration-bold">code == 'WORK100'</attribute>
+                </xpath>
+                <xpath expr="//page[@name='worked_days_input']/field[@name='worked_days_line_ids']/tree[1]/field[@name='work_entry_type_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <field name="worked_days_line_ids" position="after">
+                    <field name="leave_ids" colspan="4" nolabel="1" readonly="1">
+                        <tree>
+                            <field name="payroll_id" invisible="1"/>
+                            <field name="employee_id" invisible="1"/>
+                            <field name="sequence" invisible="1"/>
+                            <field name="leave_id"/>
+                            <field name="total_days"/>
+                            <field name="days_used"/>
+                            <field name="days"/>
+                            <field name="total"/>
+                        </tree>
+                    </field>
+                    <field name="leave_days_ids" colspan="2" force_save="1">
+                        <tree>
+                            <field name="sequence" string="#"/>
+                            <field name="date"/>
+                            <field name="amount" sum="Total Pago"/>
+                            <field name="state"/>
+                            <field name="rule_id"/>
+                        </tree>
+                    </field>
+                    <field name="payslip_day_ids" colspan="2">
+                        <tree>
+                            <field name="day"/>
+                            <field name="subtotal"/>
+                            <field name="day_type"/>
+                        </tree>
+                    </field>
+                </field>
+                <xpath expr="//field[@name='payslip_run_id']" position="after">
+                    <field name="definitive_plan" readonly="1" invisible="state != 'paid'"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="hr_payslip_view_tree" model="ir.ui.view">
+            <field name="name">Inherit HR Payslip Tree</field>
+            <field name="model">hr.payslip</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='number']" position="after">
+                    <field name="periodo" />
+                </xpath>
+                <xpath expr="//field[@name='employee_id']" position="after">
+                    <field name="department_id" />
+                    <field name="job_id" />
+                    <field name="struct_process" />
+                </xpath>
+            </field>
+        </record>
+        <!-- Formulario de nomina lotes -->
+        <record id="view_lavish_hr_payroll_lote_form_payslip" model="ir.ui.view">
+            <field name="name">hr.payroll.lavish.hr.payslip.lote.form.inherit</field>
+            <field name="model">hr.payslip.employees</field>
+            <field name="priority">1</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_by_employees" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='employee_ids']" position="replace">
+                    <field name="struct_process" invisible="1"/>
+                    <div invisible="not vacation_count" 
+                    class="alert alert-warning text-center fw-bold" 
+                    role="alert">
+                   <field name="vacation_count" nolabel="1" readonly="1"/>
+               </div>
+                    <group name="name" string="Opciones">
+                        <field name="pay_primas_in_payroll" />
+                        <field name="pay_cesantias_in_payroll" />
+                    </group>
+                    <group>
+                        <field name="struct_process" invisible="1" />
+                        <field name="date_prima" />
+                        <field name="date_cesantias" />
+                        <field name="date_liquidacion" />
+                        <field name="liquidate_contract"/>
+                        <field name="pay_vacations_in_payroll" />
+                        <field name="method_schedule_pay" widget="radio" />
+                        <field name="analytic_account_ids" widget="many2many_tags" />
+                        <field name="branch_ids" widget="many2many_tags" />
+                        <field name="state_contract" widget="radio" />
+                    </group>
+                    <group invisible="struct_process != 'prima'">
+                        <field name="prima_run_reverse_id" />
+                    </group>
+                    <group invisible="struct_process !=  'contrato'">
+                        <field name="settle_payroll_concepts" />
+                        <field name="novelties_payroll_concepts" />
+                    </group>
+                    <button string="Limpiar" name="clean_employees" type="object" />
+                    <field name="employee_ids" nolabel="1"
+                        domain="[['contract_id.state','=',state_contract]]">
+                        <tree>
+                            <field name="name" />
+                            <field name="company_id" />
+                            <field name="department_id" />
+                            <field name="job_id" />
+                            <field name="work_email" />
+                        </tree>
+                    </field>
+                </xpath>
+            </field>
+        </record>
+        <!-- Formulario de nomina lotes botones -->
+        <record id="view_lavish_hr_payroll_lote_buttons_payslip" model="ir.ui.view">
+            <field name="name">hr.payroll.lavish.hr.payslip.lote.buttons.inherit</field>
+            <field name="model">hr.payslip.run</field>
+            <field name="priority">20</field>
+            <field name="inherit_id" ref="hr_payroll.hr_payslip_run_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="before">
+                        <div invisible="not vacation_count and not contract_state_warning">
+                            <div invisible="not vacation_count" 
+                                 class="alert alert-warning mb-0 text-center" role="alert">
+                                <field name="vacation_count" nolabel="1"/>
+                            </div>
+                            <div invisible="not contract_state_warning" 
+                                 class="alert alert-info mb-0 text-center" role="alert">
+                                <field name="contract_state_warning" nolabel="1"/>
+                            </div>
+                        </div>
+                </xpath>
+                <xpath expr="//form[1]/header[1]/button[2]" position="after">
+                    <button name="assign_status_verify" type="object" string="Verificar" invisible="state != 'draft'"/>
+                    <button name="restart_payroll_batch" type="object" string="Reiniciar" invisible="state not in ['verify', 'draft']"/>
+                    <button name="restart_payroll_account_batch" type="object" string="Reversar contabilización" invisible="state not in ['verify', 'close']"/>
+                    <button name="action_reverse_payslip_run" type="object" 
+                            string="Crear Reversión" 
+                            invisible="state != 'close' or is_credit_note"
+                            class="btn-secondary"/>
+                    <button name="generate_settlement_report_entity" type="object" string="Reporte por entidad" invisible="state not in ['verify', 'close']"/>
+                    <button name="action_send_payslip_emails" 
+                        type="object" 
+                        string="Enviar por Email" 
+                        class="btn-secondary" 
+                        icon="fa-paper-plane"
+                        invisible="state not in ['verify', 'close']"/>
+                </xpath>
+                <field name="country_code" position="after">
+                    <field name="liquidate_contract"/>
+                    <field name="liquidation_structure_id" 
+                           invisible="not liquidate_contract"
+                           required="liquidate_contract"
+                           options="{'no_create': True, 'no_open': True}"/>
+                    <field name="liquidate_vacations"/>
+                </field>
+                <xpath expr="//field[@name='name']" position="before">
+                    <field name="number" readonly="1"/>
+                    <field name="sequence_prefix" invisible="1"/>
+                    <field name="is_credit_note" invisible="1"/>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/group[1]" position="after">
+                    <group>
+                        <field name="observations" force_save="1" readonly="1"
+                            invisible="not observations" />
+                        <field name="time_process" force_save="1" readonly="1"
+                            invisible="not time_process" />
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='company_id']" position="before">
+                    <field name="definitive_plan" readonly="0"/>
+                </xpath>
+            </field>
+        </record>
+        <!-- Formulario tipos de entradas de trabajo -->
+        <record id="view_lavish_hr_payroll_work_entry_type" model="ir.ui.view">
+            <field name="name">hr.payroll.lavish.work.entry.type.inherit</field>
+            <field name="model">hr.work.entry.type</field>
+            <field name="priority">20</field>
+            <field name="inherit_id" ref="hr_work_entry.hr_work_entry_type_view_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='sequence']" position="after">
+                    <field name="short_name" />
+                    <field name="deduct_deductions" widget="radio"
+                        invisible="not is_leave" />
+                    <field name="not_contribution_base"
+                        invisible="not is_leave" />
+                </xpath>
+            </field>
+        </record>
+        <record id="hr_payslip_line_kanban" model="ir.ui.view">
+            <field name="name">hr.payslip.line.kanban</field>
+            <field name="model">hr.payslip.line</field>
+            <field name="arch" type="xml">
+                <kanban string="Reglas de Nómina" default_group_by="category_id">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="category_code"/>
+                    <field name="concept_id"/>
+                    <field name="loan_id"/>
+                    <field name="leave_id"/>
+                    <field name="initial_accrual_date"/>
+                    <field name="final_accrual_date"/>
+                    <field name="amount"/>
+                    <field name="amount_select"/>
+                    <field name="amount_percentage"/>
+                    <field name="quantity"/>
+                    <field name="rate"/>
+                    <field name="total"/>
+                    <field name="appears_on_payslip"/>
+                    
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card oe_kanban_global_click" style="margin-bottom: 4px; padding: 6px;">
+                                <!-- Header con código y nombre -->
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center">
+                                            <strong class="text-primary me-2 text-uppercase">
+                                                <field name="name"/>
+                                            </strong>
+                                            <span class="text-muted text-uppercase">
+                                                (<field name="code"/>)
+                                            </span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span t-if="record.appears_on_payslip.raw_value" class="text-success">
+                                                <i class="fa fa-check"/>
+                                            </span>
+                                            <t t-if="record.category_code.raw_value">
+                                                <t t-if="['BASIC', 'DEV_SALARIAL', 'HEYREC', 'COMISIONES', 'INCAPACIDAD',                                          'LICENCIA_MATERNIDAD', 'LICENCIA_REMUNERADA', 'VACACIONES',                                          'ACCIDENTE_TRABAJO'].includes(record.category_code.raw_value)">
+                                                    <span class="text-primary">
+                                                        <i class="fa fa-plus-circle"/>
+                                                    </span>
+                                                </t>
+                                                
+                                                <t t-if="['INGS', 'DEV_NO_SALARIAL', 'IGNS','AUX'].includes(record.category_code.raw_value)">
+                                                    <span class="text-danger">
+                                                        <i class="fa fa-plus-circle"/>
+                                                    </span>
+                                                </t>
+                                                
+                                                <t t-if="['PRESTACIONES_SOCIALES', 'PRIMA'].includes(record.category_code.raw_value)">
+                                                    <span class="text-warning">
+                                                        <i class="fa fa-users"/>
+                                                    </span>
+                                                </t>
+                                                
+                                                <t t-if="record.category_code.raw_value === 'SSOCIAL'">
+                                                    <span class="text-danger">
+                                                        <strong class="text-danger me-2 text-uppercase">SGS</strong> <i class="fa fa-heartbeat"/>
+                                                    </span>
+                                                </t>
+                                        
+                                                <t t-if="record.category_code.raw_value === 'NET'">
+                                                    <span class="text-success">
+                                                        <i class="fa fa-credit-card"/>
+                                                    </span>
+                                                </t>
+                                            </t>
+                                        </div>
+                                    </div>
+                                    <div style="border-bottom: 2px solid #3498db; margin-top: 4px; box-shadow: 0 1px 2px rgba(52, 152, 219, 0.1);"/>
+                                </div>
+                                
+                                <!-- Información principal -->
+                                <div class="row g-2">
+                                    <!-- Columna izquierda -->
+                                    <div class="col-8">
+                                        <div class="d-flex gap-3 mb-1">
+                                            <div class="d-flex align-items-center">
+                                                <label for="rate" class="o_form_label mb-0 me-1 small">Base:</label>
+                                                <field name="amount" digits="[12,2]"/>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <label for="quantity" class="o_form_label mb-0 me-1 small">
+                                                    <t t-if="record.category_code.raw_value.startsWith('BASIC') || record.leave_id.raw_value">
+                                                        Días:
+                                                    </t>
+                                                    <t t-elif="record.category_code.raw_value.startsWith('HEYREC')">
+                                                        Horas:
+                                                    </t>
+                                                    <t t-else="">
+                                                        Cant:
+                                                    </t>
+                                                </label>
+                                                <t t-if="record.category_code.raw_value.startsWith('HEYREC')">
+                                                    <field name="quantity" digits="[12,2]" widget="float_time"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <field name="quantity" digits="[12,2]"/>
+                                                </t>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <label for="rate" class="o_form_label mb-0 me-1 small">Tasa:</label>
+                                                <field name="rate" digits="[12,2]"/>%
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Concepto, Préstamo o Ausencia -->
+                                        <div t-if="record.concept_id.raw_value" class="small text-muted mb-1">
+                                            <i class="fa fa-tag me-1"/> <field name="concept_id"/>
+                                        </div>
+                                        <div t-if="record.loan_id.raw_value" class="small text-muted mb-1">
+                                            <i class="fa fa-money-bill me-1"/> <field name="loan_id"/>
+                                        </div>
+                                        <div t-if="record.leave_id.raw_value" class="small text-muted">
+                                            <i class="fa fa-calendar me-1"/> <field name="leave_id"/>
+                                            <div class="ms-3">
+                                                <small>
+                                                    <field name="initial_accrual_date"/> - <field name="final_accrual_date"/>
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Columna derecha -->
+                                    <div class="col-4 text-end">
+                                        <strong t-attf-class="text-#{record.total.raw_value &gt; 0 ? 'success' : 'danger'}">
+                                            <field name="total" widget="monetary"/>
+                                        </strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <record id="hr_payslip_run_form_inherit" model="ir.ui.view">
+            <field name="name">hr.payslip.run.form.inherit</field>
+            <field name="model">hr.payslip.run</field>
+            <field name="inherit_id" ref="hr_payroll.hr_payslip_run_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//button[@name='action_open_payslips']" position="after">
+                        <button name="action_view_employees" 
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-users"  invisible="employee_count == 0">
+                            <field name="employee_count" widget="statinfo" string="Empleados"/>
+                        </button>
+                        
+                        <button name="action_view_payslips" 
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-money" invisible="payslip_count == 0">
+                            <field name="payslip_count" widget="statinfo" string="Nóminas"/>
+                        </button>
+                        <button name="action_view_contracts" type="object" class="oe_stat_button" icon="fa-file-text-o" invisible="contract_count == 0">
+                            <field name="contract_count" widget="statinfo" string="Contratos"/>
+                        </button>
+                        <button name="action_view_leaves" type="object" class="oe_stat_button" icon="fa-user-md" invisible="leave_count == 0">
+                            <field name="leave_count" widget="statinfo" string="Ausencias/Vacaciones"/>
+                        </button>
+                        <button name="action_view_confirmed_payslips" type="object" class="oe_stat_button" icon="fa-check-circle" invisible="confirmed_payslip_count == 0">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value text-success">
+                                    <field name="confirmed_payslip_count"/>
+                                </span>
+                                <span class="o_stat_text">Confirmadas</span>
+                            </div>
+                        </button>
+                        <button name="action_view_paid_payslips" type="object" class="oe_stat_button" icon="fa-money" invisible="paid_payslip_count == 0">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value text-info">
+                                    <field name="paid_payslip_count"/>
+                                </span>
+                                <span class="o_stat_text">Pagadas</span>
+                            </div>
+                        </button>
+                        <button name="action_view_draft_payslips" type="object" class="oe_stat_button" icon="fa-file-o" invisible="draft_payslip_count == 0">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value text-warning">
+                                    <field name="draft_payslip_count"/>
+                                </span>
+                                <span class="o_stat_text">Borradores</span>
+                            </div>
+                        </button>
+                    <button name="action_open_account_move" class="oe_stat_button" icon="fa-bars" type="object" help="Generated Account Move" invisible="account_move_count == 0">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_value"><field name="account_move_count"/></span>
+                            <span class="o_stat_text">Asiento Contables</span>
+                         </div>
+                    </button>
+                </xpath>
+                <field name="country_code" position="after">
+                    <field name="structure_id" force_save="1"/>
+                    
+                    <field name="method_schedule_pay" options="{'no_create': True}"/>
+                </field>
+                <xpath expr="//group" position="after">
+                    <notebook>
+                        <page string="Nominas">
+                            <group>
+                                <field name="slip_ids" mode="tree" nolabel="1" colspan="2">
+                                </field>
+                            </group>
+                            <group>
+                                <field name="time_process" readonly="1" force_save="1"/>
+                                <field name="observations" readonly="1" force_save="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
