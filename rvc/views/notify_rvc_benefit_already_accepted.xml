@@ -1,0 +1,101 @@
+<odoo>
+    <template id="notify_rvc_benefit_already_accepted" name="Notificación Beneficio RVC Ya Aceptado">
+        <t t-call="web.layout">
+            <head>
+                <style>
+                    .box {
+                        width: 550px;
+                        margin: 0 auto;
+                        font-family: Verdana, sans-serif;
+                    }
+
+                    .text-orange {
+                        color: #F26334;
+                        font-size: 18px;
+                        text-align: center;
+                        font-weight: bold;
+                    }
+
+                    .text-gray {
+                        color: #454545;
+                        font-size: 18px;
+                        text-align: justify;
+                    }
+
+                    .text-small {
+                        font-size: 12px;
+                        color: #b1b1b1;
+                        text-align: center;
+                    }
+
+                    .text-blue {
+                        color: #002C6C;
+                    }
+
+                    .banner {
+                        width: 270px;
+                        display: block;
+                        margin: 0 auto;
+                    }
+
+                    .banner-full {
+                        width: 100%;
+                        max-width: 550px;
+                        display: block;
+                        margin: 0 auto;
+                    }
+
+                    .footer-link {
+                        font-size: 16px;
+                        color: #002C6C;
+                        text-align: center;
+                        text-decoration: none;
+                        font-weight: bold;
+                    }
+
+                    .spacer {
+                        margin: 1.5em 0;
+                    }
+
+                    .contact-text {
+                        font-size: 16px;
+                        color: #454545;
+                        text-align: justify;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="box">
+                    <img class="banner" src="/rvc/static/img/banner-kit-bienv-codigosgs1aso.png" alt="Logo GS1" />
+                    <div class="spacer"></div>
+                    <img class="banner-full" src="/rvc/static/img/bannerestimadoclientegs1.png" alt="Banner Bienvenida" />
+                    <div class="spacer"></div>
+
+                    <p class="text-orange">Tu beneficio RVC ya fue aceptado</p>
+                    <p class="text-gray">
+                        Te informamos que el beneficio RVC: Derechos de identificación ya fue aceptado previamente el 
+                        <strong><t t-esc="formatted_acceptance_date"/></strong> por la empresa <strong t-esc="benefit_application.partner_id.partner_id.name"/>.
+                    </p>
+
+                    <p class="text-gray">
+                        Si ha pasado tiempo desde la aceptación y aún no has recibido una notificación de activación con los detalles para utilizar tu servicio, por favor comunícate con nosotros a través de los siguientes canales:
+                    </p>
+
+                    <div class="spacer"></div>
+
+                    <p class="contact-text">
+                        📧 Correo: <strong><a href="mailto:web@gs1co.org" class="text-blue">web@gs1co.org</a></strong><br/>
+                        💬 WhatsApp: <strong><a href="https://api.whatsapp.com/send?phone=573009982929" target="_blank" class="text-blue">+57 300 9982929</a></strong> (Opción 2 - Atención al cliente)<br/>
+                        🕓 Horario: Lunes a viernes de 8:00 a.m. a 4:00 p.m.
+                    </p>
+
+                    <div class="spacer"></div>
+
+                    <p class="text-blue" style="text-align: center;">
+                        <a href="https://www.gs1costore.org" class="footer-link">www.gs1costore.org</a>
+                    </p>
+                </div>
+            </body>
+        </t>
+    </template>
+</odoo>

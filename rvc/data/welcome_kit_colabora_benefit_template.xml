@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="mail_template_welcome_kit_colabora_rvc" model="mail.template">
+            <field name="name">Kit de Bienvenida LOGYCA/COLABORA</field>
+            <field name="model_id" ref="rvc.model_benefit_application"/>
+            <field name="subject">Kit de Bienvenida LOGYCA/COLABORA</field>
+            <field name="description">Sent manually to customer when clicking on 'Send receipt by email' in payment action</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                </div>
+            </field>
+            <!-- <field name="report_template" ref="action_carta_bienv_colabora_rvc"/> -->
+            <field name="lang">${object.lang}</field>
+            <field name="auto_delete" eval="False"/>
+        </record>
+    </data>
+</odoo>

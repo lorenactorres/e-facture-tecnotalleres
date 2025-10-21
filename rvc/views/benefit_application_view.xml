@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<record id="benefit_application_form" model="ir.ui.view">
+		<field name="name">benefit.application.form</field>
+		<field name="model">benefit.application</field>
+		<field name="arch" type="xml">
+			<form string="Postulación a Beneficios">
+				<header>
+					<button name="action_notified" type="object" invisible="benefit_type == 'tarjeta_digital' or state != 'draft'"
+                        string="Notificar al Beneficiario" class="oe_highlight" groups="rvc.group_rvc_manager"/>
+					<button name="action_confirm" type="object" invisible="state not in ['draft', 'notified']" string="Confirm" class="oe_highlight" groups="rvc.group_rvc_manager"/>
+					<button name="action_notified" type="object" invisible="state != 'notified'" string="Volver a notificar" class="oe_highlight" groups="rvc.group_rvc_manager"/>
+					<button name="action_reminder" type="object" invisible="state != 'notified'" string="Enviar Recortadorio" class="oe_highlight" groups="rvc.group_rvc_manager"/>
+					<button name="action_done" type="object" invisible="state != 'confirm'" string="Enviar Kit de Bienvenida" class="oe_highlight" groups="rvc.group_rvc_manager"/>
+					<button name="action_forward_done" type="object" invisible="state != 'done'" string="Enviar Kit Nuevamente" class="oe_highlight" groups="rvc.group_rvc_manager"/>
+					<button name="action_rejected" type="object" invisible="state != 'notified'" string="Rejected" class="oe_highlight" groups="rvc.group_rvc_manager"/>
+                    <button name="action_generate_digital_cards" type="object" string="Generar Tarjetas Digitales" class="oe_highlight"
+                        groups="rvc.group_rvc_manager" invisible="benefit_type != 'tarjeta_digital' or state not in ['confirm', 'done']"/>
+                    <button name="action_new_credentials" type="object" string="Re-Asignar Credenciales" class="oe_highlight" groups="rvc.group_rvc_manager"
+                        invisible="benefit_type not in ['colabora', 'codigos'] or state != 'done'"/>
+					<button name="action_reactivate" type="object" invisible="state not in ['rejected', 'cancel']" string="Re-activar Postulación" class="oe_highlight" groups="rvc.group_rvc_manager"/>
+					<field name="state" widget="statusbar" statusbar_visible="draft,notified,confirm,done,rejected,cancel" />
+					<button name="action_cancel" type="object" string="Cancel" class="btn-secondary"
+                     invisible="not id or state in ['rejected', 'cancel', 'done']" groups="rvc.group_rvc_manager"/>
+					<button string="Update Crecemype" name="action_application_done" type="object" class="oe_highlight"
+								invisible="benefit_type != 'crece_mype'" />
+				</header>			
+				<sheet>
+                    <h1>Postulación a Beneficio RVC</h1>
+					<group>
+						<group string="Beneficiario">
+							<field name="partner_id" readonly="state != 'draft'" />
+							<field name="vat" readonly="state != 'draft'" />
+							<field name="contact_name" required="state == 'draft'" />
+							<field name="contact_phone"/>
+							<field name="contact_email"/>
+							<field name="contact_position" />
+						</group>
+						<group string="Detalles del Beneficio">
+							<field name="product_id" />
+							<field name="benefit_type" invisible="1"/>
+                            <field name="gln" />
+                            <field name="crecemype_theme_id" invisible="benefit_type != 'crece_mype'"/>
+                            <field name="crecemype_question" invisible="benefit_type != 'crece_mype'"/>
+                            <field name="email_employee" invisible="benefit_type != 'crece_mype'"/>
+                            <field name="employee_id" invisible="benefit_type != 'crece_mype'"/>
+                            <field name="name_employee" invisible="benefit_type != 'crece_mype'"/>
+                            <field name="date_done_cons" force_save="1" readonly="1" invisible="benefit_type != 'crece_mype'"/>
+                            <field name="email_company" invisible="benefit_type != 'crece_mype'"/>
+                            <field name="product_benefit" invisible="benefit_type != 'crece_mype'"/>
+                            <field name="canal" invisible="benefit_type != 'crece_mype'"/>
+                            <field name="colabora_level" invisible="benefit_type != 'colabora'"/>
+                            <field name="renewal" invisible="benefit_type != 'colabora'"/>
+                            <field name="email_colabora" invisible="benefit_type != 'colabora'"/>
+                            <field name="end_date_colabora" invisible="benefit_type != 'colabora'"/>
+                            <button name="validate_has_colabora" type="object" string="ESTADO ACTUAL LOGYCA / COLABORA" 
+                                icon="fa-question-circle" groups="rvc.group_rvc_manager" invisible="benefit_type != 'colabora'"/>
+                            <field name="offered_service_id" invisible="benefit_type != 'tarjeta_digital'"/>
+                            <field name="partner_address" invisible="benefit_type != 'tarjeta_digital'"/>
+                            <field name="question_answered" invisible="benefit_type != 'crece_mype'"/>
+                            <field name="delivery_date" />
+							<br/><br/>
+                            <h2 style="color:#666666" invisible="benefit_type!='codigos'">Cantidad Códigos</h2>
+                            <br/>
+                            <field name="codes_quantity" invisible="benefit_type!='codigos'"/>
+                            <field name="glns_codes_quantity" invisible="benefit_type!='codigos'"/>
+                            <field name="invoice_codes_quantity" invisible="benefit_type!='codigos'"/>
+                        </group>
+					</group>
+					<group name="digital_cards" string="Tarjetas Digitales"
+                    col="1" colspan="12" invisible="benefit_type!='tarjeta_digital'" >
+                        <div class="small">
+                            Haga clic sobre la tarjeta para ver su información completa.
+                        </div><br/>
+                        <field name="digital_card_ids" nolabel="1"
+                            context="{'default_offered_service_id': offered_service_id, 'default_street': partner_address, 'default_partner_vat': vat}">
+                            <tree>
+                                <field name="contact_name"/>
+                                <field name="contact_email"/>
+                                <field name="contact_mobile"/>
+                                <field name="offered_service_id"/>
+                                <field name="digital_card_img" readonly="1" widget="download"/>
+								<button name="action_download"
+                                    type="object"
+                                    class="btn btn-secondary"
+                                    icon="fa-download"></button>
+                            </tree>
+                        </field>
+					</group>
+					<group>
+						<group string="Halonador">
+							<field name="parent_id" />
+							<field name="id" invisible="1"/>
+						</group>
+						<group string="Auditoría GS1" >
+							<field name="whatsapp_number_trail" readonly="1"/>
+							<field name="acceptance_date" readonly="1"/>
+						</group>
+					</group>
+					<group>
+						<group string="Otra Información">
+                            <field name="reminder_count" readonly="1"/>
+							<field name="is_seller" group="base.group_system" force_save="1" readonly="1"/>
+							<field name="referred_by" />
+							<field name="origin"/>
+							<field name="send_kit_with_no_benefit" group="base.group_system"/>
+						</group>
+						<group>
+						</group>
+					</group>
+				</sheet>
+				<!-- Chatter -->
+				<div class="oe_chatter">
+					<field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+					<field name="activity_ids" widget="mail_activity"/>
+					<field name="message_ids" widget="mail_thread"/>
+				</div>				
+			</form>
+		</field>
+	</record>
+	<record id="benefit_application_tree" model="ir.ui.view">
+		<field name="name">benefit.application.tree</field>
+		<field name="model">benefit.application</field>
+		<field name="arch" type="xml">
+			<tree string="Postulaciones a Beneficios" default_order="create_date desc" >
+				<field name="partner_id"/>
+				<field name="vat"/>
+				<field name="create_date" string="Fecha Postulación"/>
+				<field name="contact_name" />
+				<field name="contact_phone" />
+				<field name="contact_email" />
+				<field name="parent_id"/>
+				<field name="product_id"/>
+				<field name="benefit_type" invisible="1"/>
+				<field name="codes_count" string="# Códigos" optional="hide"/>
+				<field name="colabora_level"  optional="hide"/>
+				<field name="state"/>
+			</tree>
+		</field>
+	</record>
+
+    <record id="view_benefit_application_search" model="ir.ui.view">
+        <field name="name">benefit.application.search</field>
+        <field name="model">benefit.application</field>
+        <field name="arch" type="xml">
+            <search string="Búsqueda de Postulaciones">
+                <field name="name" string="Postulación" filter_domain="['|', ('name', 'ilike', self), ('partner_id', 'ilike', self)]"/>
+                <field name="parent_id" string="Halonadora"/>
+                <separator/>
+                <filter string="En Borrador" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Notificadas" name="notified" domain="[('state', '=', 'notified')]"/>
+                <filter string="Aceptadas" name="confirm" domain="[('state', '=', 'confirm')]"/>
+                <filter string="Rechazadas" name="rejected" domain="[('state', '=', 'rejected')]"/>
+                <filter string="Canceladas" name="cancel" domain="[('state', '=', 'cancel')]"/>
+                <filter string="En Hecho" name="done" domain="[('state', '=', 'done')]"/>
+
+                <group expand="1" string="Agrupar por">
+                    <filter string="Estado" name="state" context="{'group_by':'state'}"/>
+                    <filter string="Beneficio" name="benefit" context="{'group_by':'product_id','residual_visible':True}"/>
+                    <filter string="Halonadora" name="sponsor" context="{'group_by':'parent_id','residual_visible':True}"/>
+                    <filter string="Empresa Beneficiaria" name="beneficiary" context="{'group_by':'partner_id'}"/>
+					<filter string="Origen" name="Origen" context="{'group_by':'origin'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+	<record id="action_benefit_application" model="ir.actions.act_window">
+		<field name="name">Postulación a Beneficio</field>
+		<field name="res_model">benefit.application</field>
+		<field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_benefit_application_search"/>
+	</record>
+
+	<menuitem
+		id="hr_menu_benefit_application"
+		name="Postulación y Entrega del Beneficio"
+		action="action_benefit_application"
+		parent="rvc.hr_menu_benefit_application_parent"
+		sequence="0"
+		groups="rvc.group_rvc_manager,rvc.group_rvc_support"/>
+
+</odoo>

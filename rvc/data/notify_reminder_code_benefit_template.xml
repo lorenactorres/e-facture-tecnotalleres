@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="mail_template_notify_reminder_code_benefit" model="mail.template">
+            <field name="model_id" ref="rvc.model_benefit_application"/>
+            <field name="subject">Recordatorio: Tienes pendiente aceptar tus códigos de barras sin costo</field>
+            <field name="email_from">no-reply@gs1co.org</field>
+            <field name="email_to">{{ object.contact_email or object.email or '' }}</field>
+            <field name="lang">es_CO</field>
+            <field name="body_html" type="html">
+<div style="margin: 0 auto; max-width: 600px; font-family: 'Arial', sans-serif; line-height: 1.6; color: #333;">
+    <!-- Header with logos -->
+    <div style="text-align: center; padding: 20px 0; background-color: #f8f9fa;">
+        <img src="https://files.escala.com/public/53c5445e-cfd0-11ed-80e4-0e9807857d8a/logo-gs1-y-logyca-asociacion.png"
+             alt="LOGYCA y GS1"
+             style="max-width: 350px; height: auto; display: block; margin: 0 auto;" />
+    </div>
+
+    <!-- Banner image -->
+    <div style="text-align: center; padding: 0;">
+        <img src="https://files.escala.com/public/4b65466c-3d29-11ee-99cc-f6d3ae86907a/banner-html-oferta-mercantil.png"
+             alt="Banner Oferta Mercantil"
+             style="width: 100%; max-width: 600px; height: auto; display: block;" />
+    </div>
+
+    <!-- Main content -->
+    <div style="background-color: #f26334; padding: 20px; margin: 0;">
+        <h2 style="color: white; text-align: center; font-size: 20px; margin: 0; font-weight: bold;">
+            Estás a un paso de finalizar el proceso para adquirir el beneficio de códigos de barras sin costo
+        </h2>
+    </div>
+
+    <!-- Instructions -->
+    <div style="padding: 30px 20px; background-color: white;">
+        <p style="font-size: 16px; text-align: justify; margin-bottom: 15px;">
+            A continuación, da clic en el botón <strong style="color: #f26334;">ACEPTAR</strong>.
+            Posteriormente te llegará un correo con el kit de bienvenida y las credenciales de la plataforma <a href="https://gs1coidentificacion.org">https://gs1coidentificacion.org</a> de administración de códigos de barras de GS1 Colombia.
+        </p>
+        <p style="font-size: 16px; text-align: justify; margin-bottom: 25px;">
+            Si no requieres el beneficio o no deseas continuar el proceso, por favor ignora este mensaje.
+        </p>
+
+        <!-- Action buttons -->
+        <div style="text-align: center; margin: 30px 0;">
+            <table style="margin: 0 auto; border-spacing: 10px;">
+                <tr>
+                    <td>
+                        <t t-set="base_url" t-value="env['ir.config_parameter'].sudo().get_param('web.base.url')"/>
+                        <t t-set="accept_url" t-value="base_url + '/rvc/accept_benefit/' + str(object.access_token)"/>
+
+                        <a t-att-href="accept_url"
+                           style="background-color: #f26334; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px; display: inline-block;">
+                            ACEPTAR
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Contact section -->
+    <div style="background-color: #002c6c; padding: 20px; text-align: center;">
+        <p style="color: white; font-size: 16px; margin: 5px 0;">
+            Si no has sido notificado con anterioridad
+        </p>
+        <p style="color: white; font-size: 16px; margin: 5px 0; font-weight: bold;">
+            escríbenos a: <a href="mailto:web@gs1co.org" style="color: #f26334; text-decoration: none;">web@gs1co.org</a>
+        </p>
+    </div>
+
+    <!-- Website link -->
+    <div style="text-align: center; padding: 20px; background-color: #f8f9fa;">
+        <a href="https://www.gs1costore.org" target="_blank"
+           style="color: #002c6c; font-size: 18px; font-weight: bold; text-decoration: none;">
+            www.gs1costore.org
+        </a>
+    </div>
+
+    <!-- Social media -->
+    <div style="text-align: center; padding: 20px; background-color: white; border-top: 2px dashed #002c6c;">
+        <p style="margin-bottom: 15px; color: #666; font-size: 14px;">Interactúa con nosotros:</p>
+        <div style="display: inline-block;">
+            <a href="https://gs1co.org/blog" style="margin: 0 5px;">
+                <img src="https://logyca.odoo.com/rvc/static/img/redes-04.png" alt="Blog" style="width: 24px; height: 24px;" />
+            </a>
+            <a href="https://www.facebook.com/GS1Colombia" style="margin: 0 5px;">
+                <img src="https://logyca.odoo.com/rvc/static/img/redes-05.png" alt="Facebook" style="width: 24px; height: 24px;" />
+            </a>
+            <a href="https://www.linkedin.com/company/gs1-colombia" style="margin: 0 5px;">
+                <img src="https://logyca.odoo.com/rvc/static/img/redes-07.png" alt="LinkedIn" style="width: 24px; height: 24px;" />
+            </a>
+            <a href="https://www.instagram.com/gs1colombia" style="margin: 0 5px;">
+                <img src="https://logyca.odoo.com/rvc/static/img/redes-08.png" alt="Instagram" style="width: 24px; height: 24px;" />
+            </a>
+        </div>
+    </div>
+</div>
+            </field>
+        <field name="auto_delete" eval="False"/>
+    </record>
+</data>
+</odoo>
