@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="leave_form_template" name="Formulario de Ausencias">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <div class="container mt-5 mb-5">
+                    <div class="row">
+                        <div class="col-md-10 offset-md-1">
+                            <h1 class="text-center mb-4">Registro de Vacaciones y Permisos</h1>
+                            
+                            <!-- Imagen Guía para Incapacidades Médicas -->
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0">
+                                        <i class="fa fa-info-circle"></i> Guía para Incapacidades Médicas
+                                    </h5>
+                                </div>
+                                <div class="card-body p-0">
+                                    <img src="/website_leave_form/static/src/img/guia_incapacidades.png" 
+                                         class="img-fluid w-100" 
+                                         alt="Guía para llenar el formulario de incapacidades médicas"
+                                         style="cursor: pointer;"
+                                         onclick="window.open(this.src, '_blank')"/>
+                                    <div class="p-3 bg-light">
+                                        <small class="text-muted">
+                                            <i class="fa fa-hand-pointer-o"></i> Haz clic en la imagen para verla en tamaño completo
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Mensajes de éxito o error -->
+                            <t t-if="success">
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>¡Éxito!</strong> <t t-esc="success"/>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            </t>
+                            
+                            <t t-if="error">
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Error:</strong> <t t-esc="error"/>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            </t>
+
+                            <!-- Formulario -->
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-primary text-white">
+                                    <h4 class="mb-0">Datos de la Solicitud</h4>
+                                </div>
+                                <div class="card-body p-4">
+                                    <form action="/ausencias/submit" method="POST" enctype="multipart/form-data" class="needs-validation" id="leaveForm">
+                                        
+                                        <!-- Información Personal -->
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="name" class="form-label fw-bold">Nombre Completo *</label>
+                                                <input type="text" class="form-control" id="name" name="name" required="required" placeholder="Juan Pérez"/>
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label for="email" class="form-label fw-bold">Email Corporativo *</label>
+                                                <input type="email" class="form-control" id="email" name="email" required="required" placeholder="juan.perez@empresa.com"/>
+                                                <small class="form-text text-muted">Debe coincidir con tu email registrado</small>
+                                            </div>
+                                        </div>
+
+                                        <hr class="my-4"/>
+
+                                        <!-- Detalles de la Ausencia -->
+                                        <div class="row">
+                                            <div class="col-md-4 mb-3">
+                                                <label for="request_date" class="form-label fw-bold">Fecha de Solicitud *</label>
+                                                <input type="date" class="form-control" id="request_date" name="request_date" 
+                                                       t-att-value="today" readonly="readonly"/>
+                                                <small class="form-text text-muted">Fecha actual</small>
+                                            </div>
+
+                                            <div class="col-md-4 mb-3">
+                                                <label for="holiday_status_id" class="form-label fw-bold">Tipo de Ausencia *</label>
+                                                <select class="form-select" id="holiday_status_id" name="holiday_status_id" required="required">
+                                                    <option value="">-- Seleccione un tipo --</option>
+                                                    <t t-foreach="leave_types" t-as="leave_type">
+                                                        <option t-att-value="leave_type.id" 
+                                                                t-att-data-require-attachment="leave_type.require_attachment"
+                                                                t-att-data-one-day-per-semester="leave_type.one_day_per_semester">
+                                                            <t t-esc="leave_type.name"/>
+                                                            <t t-if="leave_type.require_attachment"> 📎</t>
+                                                            <t t-if="leave_type.one_day_per_semester"> ⏱️</t>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-4 mb-3">
+                                                <label for="approver_id" class="form-label fw-bold">Aprobador *</label>
+                                                <select class="form-select" id="approver_id" name="approver_id" required="required">
+                                                    <option value="">-- Seleccione un aprobador --</option>
+                                                    <t t-foreach="approvers" t-as="approver">
+                                                        <option t-att-value="approver.id">
+                                                            <t t-esc="approver.name"/>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                                <small class="form-text text-muted" id="approverHelp">
+                                                    <span t-if="not approvers">Ingresa tu email corporativo para cargar los aprobadores disponibles</span>
+                                                    <span t-else="">Terceros relacionados a tu empresa</span>
+                                                </small>
+                                            </div>
+                                        </div>
+
+                                        <hr class="my-4"/>
+
+                                        <!-- Fechas -->
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="date_from" class="form-label fw-bold">Fecha y Hora Inicio *</label>
+                                                <input type="datetime-local" class="form-control" id="date_from" name="date_from" required="required"/>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="date_to" class="form-label fw-bold">Fecha y Hora Fin *</label>
+                                                <input type="datetime-local" class="form-control" id="date_to" name="date_to" required="required"/>
+                                            </div>
+                                        </div>
+
+                                        <!-- Adjuntos (condicional) -->
+                                        <div class="mb-3" id="attachmentSection" style="display: none;">
+                                            <label for="attachments" class="form-label fw-bold">
+                                                Documentos Adjuntos <span class="text-danger" id="attachmentRequired">*</span>
+                                            </label>
+                                            <input type="file" class="form-control" id="attachments" name="attachments" multiple="multiple" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"/>
+                                            <small class="form-text text-muted">
+                                                📎 Este tipo de ausencia requiere adjuntar documentos de soporte (incapacidades, certificados, etc.)
+                                            </small>
+                                            <div id="fileList" class="mt-2"></div>
+                                        </div>
+
+                                        <!-- Alerta para tipos con límite de un día por semestre -->
+                                        <div class="alert alert-warning" id="semesterLimitAlert" style="display: none;" role="alert">
+                                            <i class="fa fa-exclamation-triangle"></i>
+                                            <strong>⏱️ Restricción de Tiempo:</strong> Este tipo de ausencia tiene las siguientes restricciones:
+                                            <ul class="mb-0 mt-2">
+                                                <li><strong>Duración máxima:</strong> Solo puedes solicitar <strong>1 día</strong> (24 horas o menos)</li>
+                                                <li><strong>Frecuencia:</strong> Solo se permite <strong>un día por semestre</strong></li>
+                                            </ul>
+                                            <small class="text-muted">Si ya tienes una solicitud aprobada o pendiente de este tipo en el semestre actual, no podrás crear una nueva.</small>
+                                        </div>
+
+                                        <!-- Notas -->
+                                        <div class="mb-4">
+                                            <label for="notes" class="form-label fw-bold">Motivo/Notas</label>
+                                            <textarea class="form-control" id="notes" name="notes" rows="4" placeholder="Describe el motivo de tu ausencia (opcional)..."></textarea>
+                                        </div>
+
+                                        <!-- Botón de envío -->
+                                        <div class="d-grid gap-2">
+                                            <button type="submit" class="btn btn-primary btn-lg">
+                                                <i class="fa fa-paper-plane me-2"></i>Enviar Solicitud
+                                            </button>
+                                        </div>
+
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Información adicional -->
+                            <div class="alert alert-info mt-4" role="alert">
+                                <strong>Nota:</strong> Una vez enviada tu solicitud, el aprobador seleccionado recibirá una notificación para revisar tu ausencia.
+                            </div>
+
+                            <!-- Enlaces útiles -->
+                            <div class="text-center mt-3">
+                                <a href="/ausencias/consultar" class="btn btn-outline-info">
+                                    🔍 Consulta de Vacaciones o Permisos Aprobados
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Script para manejar adjuntos condicionales -->
+            <script type="text/javascript">
+                document.addEventListener('DOMContentLoaded', function() {
+                    const leaveTypeSelect = document.getElementById('holiday_status_id');
+                    const attachmentSection = document.getElementById('attachmentSection');
+                    const attachmentInput = document.getElementById('attachments');
+                    const attachmentRequired = document.getElementById('attachmentRequired');
+                    const fileList = document.getElementById('fileList');
+                    const emailInput = document.getElementById('email');
+                    const approverSelect = document.getElementById('approver_id');
+                    const approverHelp = document.getElementById('approverHelp');
+                    const semesterLimitAlert = document.getElementById('semesterLimitAlert');
+
+                    // Cargar aprobadores cuando se ingresa/cambia el email
+                    let emailTimeout = null;
+                    emailInput.addEventListener('input', function() {
+                        clearTimeout(emailTimeout);
+                        emailTimeout = setTimeout(function() {
+                            const email = emailInput.value.trim();
+                            if (email &amp;&amp; email.includes('@')) {
+                                loadApprovers(email);
+                            }
+                        }, 500); // Esperar 500ms después de que el usuario deje de escribir
+                    });
+
+                    function loadApprovers(email) {
+                        // Deshabilitar select mientras carga
+                        approverSelect.disabled = true;
+                        approverSelect.innerHTML = '<option value="">Cargando...</option>';
+
+                        // Llamada AJAX usando fetch
+                        fetch('/ausencias/get_approvers', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                jsonrpc: '2.0',
+                                method: 'call',
+                                params: {
+                                    email: email
+                                }
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            approverSelect.innerHTML = '<option value="">-- Seleccione un aprobador --</option>';
+                            
+                            if (data.result &amp;&amp; data.result.length > 0) {
+                                data.result.forEach(function(approver) {
+                                    const option = document.createElement('option');
+                                    option.value = approver.id;
+                                    option.textContent = approver.name;
+                                    approverSelect.appendChild(option);
+                                });
+                                approverHelp.innerHTML = '<span class="text-success">✓ Aprobadores cargados correctamente</span>';
+                            } else {
+                                approverHelp.innerHTML = '<span class="text-warning">⚠ No se encontraron aprobadores para este email o el empleado no tiene empresa asignada</span>';
+                            }
+                            
+                            approverSelect.disabled = false;
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            approverSelect.innerHTML = '<option value="">-- Error al cargar aprobadores --</option>';
+                            approverHelp.innerHTML = '<span class="text-danger">✗ Error al cargar aprobadores</span>';
+                            approverSelect.disabled = false;
+                        });
+                    }
+
+                    // Mostrar/ocultar sección de adjuntos según el tipo seleccionado
+                    leaveTypeSelect.addEventListener('change', function() {
+                        const selectedOption = this.options[this.selectedIndex];
+                        const requireAttachment = selectedOption.getAttribute('data-require-attachment') === 'True';
+                        const oneDayPerSemester = selectedOption.getAttribute('data-one-day-per-semester') === 'True';
+                        
+                        if (requireAttachment) {
+                            attachmentSection.style.display = 'block';
+                            attachmentInput.required = true;
+                            attachmentRequired.style.display = 'inline';
+                        } else {
+                            attachmentSection.style.display = 'none';
+                            attachmentInput.required = false;
+                            attachmentRequired.style.display = 'none';
+                        }
+                        
+                        // Mostrar/ocultar alerta de límite de semestre
+                        if (oneDayPerSemester) {
+                            semesterLimitAlert.style.display = 'block';
+                        } else {
+                            semesterLimitAlert.style.display = 'none';
+                        }
+                    });
+
+                    // Mostrar lista de archivos seleccionados
+                    attachmentInput.addEventListener('change', function() {
+                        fileList.innerHTML = '';
+                        if (this.files.length > 0) {
+                            const ul = document.createElement('ul');
+                            ul.className = 'list-group';
+                            for (let i = 0; i &lt; this.files.length; i++) {
+                                const li = document.createElement('li');
+                                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                                li.innerHTML = `
+                                    <span>📄 ${this.files[i].name}</span>
+                                    <span class="badge bg-primary rounded-pill">${(this.files[i].size / 1024).toFixed(2)} KB</span>
+                                `;
+                                ul.appendChild(li);
+                            }
+                            fileList.appendChild(ul);
+                        }
+                    });
+
+                    // Validar duración para tipos con restricción de un día por semestre
+                    const dateFromInput = document.getElementById('date_from');
+                    const dateToInput = document.getElementById('date_to');
+                    const leaveForm = document.getElementById('leaveForm');
+
+                    function validateOneDayDuration() {
+                        const selectedOption = leaveTypeSelect.options[leaveTypeSelect.selectedIndex];
+                        const oneDayPerSemester = selectedOption.getAttribute('data-one-day-per-semester') === 'True';
+                        
+                        if (!oneDayPerSemester || !dateFromInput.value || !dateToInput.value) {
+                            return true;
+                        }
+
+                        const dateFrom = new Date(dateFromInput.value);
+                        const dateTo = new Date(dateToInput.value);
+                        const diffInMs = dateTo - dateFrom;
+                        const diffInHours = diffInMs / (1000 * 60 * 60);
+                        const diffInDays = diffInHours / 24;
+
+                        // Permitir hasta 1 día (24 horas)
+                        if (diffInDays > 1) {
+                            alert('⏱️ Este tipo de ausencia solo permite una duración máxima de 1 día (24 horas).\n\nDuración seleccionada: ' + diffInDays.toFixed(2) + ' días\n\nPor favor, ajusta las fechas.');
+                            return false;
+                        }
+                        
+                        return true;
+                    }
+
+                    // Validar al cambiar las fechas
+                    dateFromInput.addEventListener('change', validateOneDayDuration);
+                    dateToInput.addEventListener('change', validateOneDayDuration);
+
+                    // Validar al enviar el formulario
+                    leaveForm.addEventListener('submit', function(event) {
+                        if (!validateOneDayDuration()) {
+                            event.preventDefault();
+                            return false;
+                        }
+                    });
+                });
+            </script>
+        </t>
+    </template>
+
+    <!-- Template para consulta de ausencias -->
+    <template id="leave_query_template" name="Consulta de Ausencias">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <div class="container mt-5 mb-5">
+                    <div class="row">
+                        <div class="col-md-8 offset-md-2">
+                            <h1 class="text-center mb-4">Consultar Mis Ausencias</h1>
+                            
+                            <!-- Mensajes de éxito o error -->
+                            <t t-if="success">
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>¡Éxito!</strong> <t t-esc="success"/>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            </t>
+                            
+                            <t t-if="error">
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Error:</strong> <t t-esc="error"/>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            </t>
+
+                            <!-- Formulario de Consulta -->
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-info text-white">
+                                    <h4 class="mb-0">🔍 Consulta de Ausencias Aprobadas</h4>
+                                </div>
+                                <div class="card-body p-4">
+                                    <p class="text-muted mb-4">
+                                        Ingresa tu número de identificación y el rango de fechas para recibir un resumen de tus ausencias aprobadas en tu correo electrónico.
+                                    </p>
+
+                                    <form action="/ausencias/consultar/submit" method="POST">
+                                        
+                                        <div class="mb-4">
+                                            <label for="identification_id" class="form-label fw-bold">Número de Identificación *</label>
+                                            <input type="text" class="form-control form-control-lg" id="identification_id" 
+                                                   name="identification_id" required="required" 
+                                                   placeholder="Ej: 1234567890"/>
+                                            <small class="form-text text-muted">Ingresa tu cédula o documento de identidad</small>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="date_from" class="form-label fw-bold">Fecha Desde *</label>
+                                                <input type="date" class="form-control" id="date_from" name="date_from" required="required"/>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="date_to" class="form-label fw-bold">Fecha Hasta *</label>
+                                                <input type="date" class="form-control" id="date_to" name="date_to" required="required"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="alert alert-info" role="alert">
+                                            <strong>ℹ️ Nota:</strong> El resumen será enviado al correo electrónico corporativo registrado en el sistema.
+                                        </div>
+
+                                        <div class="d-grid gap-2">
+                                            <button type="submit" class="btn btn-info btn-lg text-white">
+                                                <i class="fa fa-search me-2"></i>Consultar y Enviar por Email
+                                            </button>
+                                        </div>
+
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Enlaces útiles -->
+                            <div class="text-center mt-4">
+                                <a href="/ausencias/formulario" class="btn btn-outline-primary">
+                                    ← Volver a Solicitar Ausencia
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Template para confirmación exitosa de aprobación -->
+    <template id="approval_success" name="Aprobación Exitosa">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure oe_empty">
+                <div class="container mt-5 mb-5">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="card shadow-lg border-0">
+                                <div class="card-body p-5 text-center">
+                                    <!-- Icono de éxito -->
+                                    <div class="mb-4">
+                                        <t t-if="action == 'approve'">
+                                            <div class="text-success" style="font-size: 80px;">
+                                                <i class="fa fa-check-circle"></i>
+                                            </div>
+                                            <h2 class="text-success mt-3">¡Ausencia Aprobada!</h2>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="text-danger" style="font-size: 80px;">
+                                                <i class="fa fa-times-circle"></i>
+                                            </div>
+                                            <h2 class="text-danger mt-3">Ausencia Rechazada</h2>
+                                        </t>
+                                    </div>
+
+                                    <!-- Información de la solicitud -->
+                                    <div class="alert alert-info text-left">
+                                        <h5>Detalles de la Solicitud:</h5>
+                                        <ul class="list-unstyled mb-0">
+                                            <li><strong>Solicitante:</strong> <t t-esc="leave_form.name"/></li>
+                                            <li><strong>Email:</strong> <t t-esc="leave_form.email"/></li>
+                                            <li><strong>Tipo de Ausencia:</strong> <t t-esc="leave_form.holiday_status_id.name"/></li>
+                                            <li><strong>Desde:</strong> <t t-esc="leave_form.date_from.strftime('%d/%m/%Y %H:%M') if leave_form.date_from else ''"/></li>
+                                            <li><strong>Hasta:</strong> <t t-esc="leave_form.date_to.strftime('%d/%m/%Y %H:%M') if leave_form.date_to else ''"/></li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- Mensaje de confirmación -->
+                                    <div class="alert alert-success">
+                                        <i class="fa fa-envelope-o"></i>
+                                        <strong>Notificación enviada</strong>
+                                        <p class="mb-0">Se ha enviado un email de confirmación al empleado 
+                                        <strong><t t-esc="leave_form.email"/></strong> 
+                                        informándole que su solicitud ha sido <strong><t t-esc="action_text"/></strong>.</p>
+                                    </div>
+
+                                    <!-- Información adicional -->
+                                    <div class="mt-4">
+                                        <p class="text-muted">
+                                            <i class="fa fa-info-circle"></i>
+                                            Esta página puede cerrarse. La acción ha sido registrada en el sistema.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Template para errores en la aprobación -->
+    <template id="approval_error" name="Error en Aprobación">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure oe_empty">
+                <div class="container mt-5 mb-5">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="card shadow-lg border-0">
+                                <div class="card-body p-5 text-center">
+                                    <!-- Icono de error -->
+                                    <div class="mb-4">
+                                        <div class="text-warning" style="font-size: 80px;">
+                                            <i class="fa fa-exclamation-triangle"></i>
+                                        </div>
+                                        <h2 class="text-warning mt-3"><t t-esc="error_title or 'Error'"/></h2>
+                                    </div>
+
+                                    <!-- Mensaje de error -->
+                                    <div class="alert alert-warning">
+                                        <p class="mb-0"><t t-esc="error_message or 'Ocurrió un error al procesar la solicitud.'"/></p>
+                                    </div>
+
+                                    <!-- Información adicional si existe -->
+                                    <t t-if="leave_form">
+                                        <div class="alert alert-info text-left mt-4">
+                                            <h6>Estado actual de la solicitud:</h6>
+                                            <ul class="list-unstyled mb-0">
+                                                <li><strong>Solicitante:</strong> <t t-esc="leave_form.name"/></li>
+                                                <li><strong>Estado:</strong> 
+                                                    <span t-if="leave_form.state == 'approved'" class="badge badge-success">Aprobada</span>
+                                                    <span t-elif="leave_form.state == 'rejected'" class="badge badge-danger">Rechazada</span>
+                                                    <span t-else="" class="badge badge-warning">Pendiente</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </t>
+
+                                    <!-- Información de ayuda -->
+                                    <div class="mt-4">
+                                        <p class="text-muted">
+                                            <i class="fa fa-info-circle"></i>
+                                            Si crees que esto es un error, por favor contacta al administrador del sistema.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>
